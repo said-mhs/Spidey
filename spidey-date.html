@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Mission For You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101014;
+    --paper:#f3ecd8;
+    --red:#e2372c;
+    --blue:#1c3f94;
+    --gold:#ffcc33;
+    --white:#fff;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background:var(--paper);
+    font-family:'Poppins',sans-serif;
+    color:var(--ink);
+    overflow-x:hidden;
+  }
+  body{
+    background-image:
+      radial-gradient(circle, rgba(16,16,20,0.08) 1.4px, transparent 1.4px);
+    background-size: 16px 16px;
+  }
+  #app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    position:relative;
+  }
+  .screen{
+    display:none;
+    width:100%;
+    max-width:560px;
+    text-align:center;
+    background:var(--white);
+    border:5px solid var(--ink);
+    border-radius:18px;
+    padding:44px 32px;
+    box-shadow: 10px 10px 0 var(--ink);
+    position:relative;
+    overflow:hidden;
+  }
+  .screen.active{
+    display:block;
+    animation: swingIn 0.55s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes swingIn{
+    0%{ opacity:0; transform: rotate(-9deg) translateY(-40px) scale(.92); }
+    60%{ opacity:1; transform: rotate(3deg) translateY(4px) scale(1.02); }
+    100%{ opacity:1; transform: rotate(0deg) translateY(0) scale(1); }
+  }
+  h1,h2{
+    font-family:'Bangers', cursive;
+    letter-spacing:1px;
+    margin:0 0 10px;
+    line-height:1.05;
+    text-shadow: 3px 3px 0 var(--red);
+    color:var(--white);
+    -webkit-text-stroke: 2px var(--ink);
+  }
+  h1{ font-size:clamp(2.1rem, 6vw, 3.1rem); }
+  h2{ font-size:clamp(1.7rem, 5vw, 2.4rem); color:var(--white); text-shadow:3px 3px 0 var(--blue); }
+  .sub{
+    font-size:1rem;
+    color:#444;
+    margin-bottom:30px;
+  }
+  .choice-row{
+    display:flex;
+    gap:22px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:10px;
+    min-height:120px;
+  }
+  .btn{
+    font-family:'Bangers', cursive;
+    font-size:1.5rem;
+    letter-spacing:1px;
+    padding:16px 38px;
+    border-radius:12px;
+    border:4px solid var(--ink);
+    cursor:pointer;
+    box-shadow:5px 5px 0 var(--ink);
+    transition: transform .12s ease;
+  }
+  .btn:active{ transform: translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+  .btn-yes{
+    background:var(--gold);
+    color:var(--ink);
+  }
+  .btn-yes:hover{ transform: translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); }
+  .btn-no{
+    background:#ddd;
+    color:#555;
+    position:relative;
+    z-index:50;
+    max-width: calc(100% - 24px);
+  }
+  .option-row, .option-col{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:20px;
+  }
+  .option-col{ flex-direction:column; align-items:stretch; max-width:340px; margin-left:auto; margin-right:auto; }
+  .option-btn{
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    padding:16px 22px;
+    border-radius:12px;
+    border:3px solid var(--ink);
+    background:var(--white);
+    color:var(--ink);
+    cursor:pointer;
+    box-shadow:4px 4px 0 var(--ink);
+    transition: all .15s ease;
+  }
+  .option-btn:hover{
+    background:var(--blue);
+    color:var(--white);
+    transform: translate(-2px,-2px);
+    box-shadow:6px 6px 0 var(--ink);
+  }
+  .thwip{
+    position:absolute;
+    font-family:'Bangers', cursive;
+    font-size:1.6rem;
+    color:var(--red);
+    -webkit-text-stroke: 1.5px var(--ink);
+    pointer-events:none;
+    z-index:60;
+    animation: thwipPop .7s ease-out forwards;
+  }
+  @keyframes thwipPop{
+    0%{ opacity:1; transform: scale(.6) rotate(-8deg); }
+    40%{ opacity:1; transform: scale(1.15) rotate(4deg); }
+    100%{ opacity:0; transform: scale(1) translateY(-24px) rotate(0deg); }
+  }
+  .corner-web{
+    position:absolute;
+    width:90px;
+    height:90px;
+    opacity:.5;
+    pointer-events:none;
+  }
+  .corner-web.tl{ top:-10px; left:-10px; }
+  .corner-web.br{ bottom:-10px; right:-10px; transform: rotate(180deg); }
+  #summary{
+    margin-top:22px;
+    background:var(--paper);
+    border:3px dashed var(--ink);
+    border-radius:12px;
+    padding:16px;
+    font-weight:600;
+    text-align:left;
+    font-size:.95rem;
+  }
+  #summary div{ margin:4px 0; }
+  .emoji-row{ font-size:2.2rem; margin-bottom:6px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section class="screen active" id="screen-ask">
+    <svg class="corner-web tl" viewBox="0 0 100 100"><g stroke="#101014" stroke-width="1.5" fill="none" opacity="0.6">
+      <path d="M0,0 L100,100 M0,30 Q30,30 30,0 M0,55 Q55,55 55,0 M0,80 Q80,80 80,0"/>
+      <path d="M15,15 Q10,40 40,10 M28,28 Q22,55 55,22 M42,42 Q35,68 68,35"/>
+    </g></svg>
+    <div class="emoji-row">🕸️</div>
+    <h1>Will you swing into this with me?</h1>
+    <p class="sub">A rooftop screening of the new Spider-Man is calling. Suit up?</p>
+    <div class="choice-row">
+      <button class="btn btn-yes" id="yesBtn">YES!</button>
+      <button class="btn btn-no" id="noBtn">No</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-date">
+    <h2>Pick the day</h2>
+    <p class="sub">When do we swing by the theater? (it may change)</p>
+    <div class="option-row">
+      <button class="option-btn" data-value="the 7th">The 7th</button>
+      <button class="option-btn" data-value="the 8th">The 8th</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-food">
+    <h2>Snack loadout</h2>
+    <p class="sub">Men dok natfahmo bb.</p>
+    <div class="option-row">
+      <button class="option-btn" data-value="popcorn">🍿 Popcorn</button>
+      <button class="option-btn" data-value="chips">🥔 Chips</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-activity">
+    <h2>During the movie...?</h2>
+    <div class="option-col">
+      <button class="option-btn" data-value="a hug">1. Eating together</button>
+      <button class="option-btn" data-value="held hands">2. Hold hands</button>
+      <button class="option-btn" data-value="nothing :(">3. Nothing :(</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-thanks">
+    <svg class="corner-web br" viewBox="0 0 100 100"><g stroke="#101014" stroke-width="1.5" fill="none" opacity="0.6">
+      <path d="M0,0 L100,100 M0,30 Q30,30 30,0 M0,55 Q55,55 55,0 M0,80 Q80,80 80,0"/>
+      <path d="M15,15 Q10,40 40,10 M28,28 Q22,55 55,22 M42,42 Q35,68 68,35"/>
+    </g></svg>
+    <div class="emoji-row">❤️🕷️</div>
+    <h1>Thanks, love.</h1>
+    <p class="sub">See you my cackeeeeee 😘.</p>
+    <div id="summary"></div>
+    <button class="option-btn" id="resendBtn" style="margin-top:18px;">💌 Resend the email</button>
+  </section>
+
+</div>
+
+<script>
+  const state = { date:null, food:null, activity:null };
+
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.getElementById('yesBtn').addEventListener('click', ()=> showScreen('screen-date'));
+
+  document.querySelectorAll('#screen-date .option-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.date = btn.dataset.value;
+      showScreen('screen-food');
+    });
+  });
+
+  document.querySelectorAll('#screen-food .option-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.food = btn.dataset.value;
+      showScreen('screen-activity');
+    });
+  });
+
+  document.querySelectorAll('#screen-activity .option-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.activity = btn.dataset.value;
+      buildSummary();
+      showScreen('screen-thanks');
+      sendEmail();
+    });
+  });
+
+  function buildSummary(){
+    document.getElementById('summary').innerHTML = `
+      <div>📅 Date: <strong>${state.date}</strong></div>
+      <div>🍿 Snack: <strong>${state.food}</strong></div>
+      <div>💫 Plan: <strong>${state.activity}</strong></div>
+    `;
+  }
+
+  function sendEmail(){
+    const subject = "She said YES! 🕸️";
+    const body =
+      "She's in!\n\n" +
+      "Date: " + state.date + "\n" +
+      "Snack: " + state.food + "\n" +
+      "Plan: " + state.activity;
+    const link = "mailto:saidmahious199@gmail.com" +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+    window.location.href = link;
+  }
+
+  document.getElementById('resendBtn').addEventListener('click', sendEmail);
+
+  // --- The unpickable "No" button ---
+  const noBtn = document.getElementById('noBtn');
+  const taunts = ["No", "Nope", "Try again 3iniya", "Nice try bb", "Ghir diri yes bb", "Nuh-uh", "Give up zineee"];
+  let dodgeCount = 0;
+
+  const card = document.getElementById('screen-ask');
+
+  function spawnThwip(x, y){
+    const t = document.createElement('div');
+    t.className = 'thwip';
+    t.textContent = 'THWIP!';
+    t.style.left = x + 'px';
+    t.style.top = y + 'px';
+    card.appendChild(t);
+    setTimeout(()=> t.remove(), 700);
+  }
+
+  function dodge(){
+    const cardRect = card.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    if (noBtn.style.position !== 'absolute'){
+      // switch to absolute, keeping it visually in place first
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = (btnRect.left - cardRect.left) + 'px';
+      noBtn.style.top = (btnRect.top - cardRect.top) + 'px';
+    }
+
+    const w = noBtn.offsetWidth;
+    const h = noBtn.offsetHeight;
+    const padding = 10;
+    const maxX = Math.max(0, card.clientWidth - w - padding * 2);
+    const maxY = Math.max(0, card.clientHeight - h - padding * 2);
+
+    const prevLeft = parseFloat(noBtn.style.left) || 0;
+    const prevTop = parseFloat(noBtn.style.top) || 0;
+    spawnThwip(prevLeft, prevTop);
+
+    const x = padding + Math.random() * maxX;
+    const y = padding + Math.random() * maxY;
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    noBtn.textContent = taunts[dodgeCount % taunts.length];
+    dodgeCount++;
+  }
+
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('focus', dodge);
+  noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodge(); }, {passive:false});
+  noBtn.addEventListener('click', (e)=>{ e.preventDefault(); dodge(); });
+</script>
+</body>
+</html>
